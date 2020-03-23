@@ -4,6 +4,9 @@ import { typeOf as getTypeOf } from '@ember/utils';
 import getAssetMapData from 'ember-cli-ifa/utils/get-asset-map-data';
 
 export function initialize(app) {
+  if (!app.resolveRegistration('config:environment').ifa.enabled) {
+    return;
+  }
   let assetMapFile = getAssetMapData();
 
   if (!assetMapFile) {

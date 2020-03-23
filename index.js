@@ -31,7 +31,7 @@ module.exports = {
   },
 
   contentFor(type) {
-    if (type !== 'head') {
+    if (type !== 'head' || this._ifaDisabled()) {
       return;
     }
 
@@ -47,6 +47,10 @@ module.exports = {
    * generated in the postBuild() below.
    */
   updateFastBootManifest(manifest) {
+    if (this._ifaDisabled()) {
+      return manifest;
+    }
+
     manifest.vendorFiles.push('assets/assetMap.js');
 
     return manifest;
@@ -58,7 +62,7 @@ module.exports = {
     const env = process.env.EMBER_ENV;
     const ifaConfig = this.project.config(env).ifa;
 
-    if (!ifaConfig.enabled) {
+    if (this._ifaDisabled()) {
       return;
     }
 
@@ -119,4 +123,11 @@ module.exports = {
       replacePlaceholder(testIndexPath, assetMap);
     }
   },
+
+  _ifaDisabled() {
+    const env = process.env.EMBER_ENV;
+    const ifaConfig = this.project.config(env).ifa;
+
+    return !ifaConfig.enabled;
+  }
 };
